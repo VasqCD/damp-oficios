@@ -147,7 +147,7 @@ function getEstadoBadge(estado: string) {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                <TableRow v-for="solicitud in solicitudes.data" :key="solicitud.id">
+                                <TableRow v-for="solicitud in solicitudesdata" :key="solicitud.id">
                                     <TableCell class="font-medium">
                                         {{ solicitud.numero_oficio_entrante }}
                                     </TableCell>
@@ -200,7 +200,7 @@ function getEstadoBadge(estado: string) {
                                         </div>
                                     </TableCell>
                                 </TableRow>
-                                <TableRow v-if="solicitudes.data.length === 0">
+                                <TableRow v-if="solicitudesdata.length === 0">
                                     <TableCell colspan="7" class="text-center text-muted-foreground">
                                         No se encontraron solicitudes
                                     </TableCell>
@@ -209,10 +209,10 @@ function getEstadoBadge(estado: string) {
                         </Table>
                     </div>
 
-                    <div v-if="solicitudes.meta.last_page > 1" class="mt-4 flex justify-center">
+                    <div v-if="solicitudesmeta.last_page > 1" class="mt-4 flex justify-center">
                         <div class="flex gap-2">
                             <Link
-                                v-for="link in solicitudes.meta.links"
+                                v-for="link in solicitudesmeta.links"
                                 :key="link.label"
                                 :href="link.url"
                                 :class="[
