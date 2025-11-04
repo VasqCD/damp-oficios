@@ -593,20 +593,28 @@ Registrar en una tabla `audit_logs`:
 
 ### 🔄 En Progreso
 
-#### Vistas Inertia/Vue (0%)
-- ⏳ Dashboard.vue
-- ⏳ Instituciones/Index.vue
-- ⏳ Instituciones/Create.vue
-- ⏳ Instituciones/Edit.vue
-- ⏳ Instituciones/Show.vue
-- ⏳ Solicitudes/Index.vue
-- ⏳ Solicitudes/Create.vue
-- ⏳ Solicitudes/Edit.vue
-- ⏳ Solicitudes/Show.vue
-- ⏳ Respuestas/Index.vue
-- ⏳ Respuestas/Create.vue
-- ⏳ Personas Registradas (vistas completas)
-- ⏳ Catálogos restantes (vistas completas)
+#### Vistas Inertia/Vue (40%)
+- ✅ Dashboard.vue - Dashboard con estadísticas en cards
+- ✅ Instituciones/Index.vue - Lista con búsqueda y paginación
+- ✅ Instituciones/Create.vue - Formulario de creación
+- ✅ Instituciones/Edit.vue - Formulario de edición
+- ✅ Instituciones/Show.vue - Vista de detalle con unidades y solicitudes
+- ✅ Solicitudes/Index.vue - Lista con búsqueda, filtros y paginación
+- ✅ Respuestas/Index.vue - Lista con búsqueda, filtros y enlace a PDF
+- ✅ PersonasRegistradas/Index.vue - Lista con búsqueda y paginación
+- ⏳ Solicitudes/Create.vue (pendiente - compleja, manejo múltiples personas)
+- ⏳ Solicitudes/Edit.vue (pendiente)
+- ⏳ Solicitudes/Show.vue (pendiente)
+- ⏳ Respuestas/Create.vue (pendiente - generación automática)
+- ⏳ Respuestas/Edit.vue (pendiente)
+- ⏳ Respuestas/Show.vue (pendiente)
+- ⏳ PersonasRegistradas/Create.vue (pendiente - con upload de foto)
+- ⏳ PersonasRegistradas/Edit.vue (pendiente)
+- ⏳ PersonasRegistradas/Show.vue (pendiente)
+- ⏳ Unidades (vistas completas - pendiente)
+- ⏳ Cargos (vistas completas - pendiente)
+- ⏳ Agentes (vistas completas - pendiente)
+- ⏳ Delitos (vistas completas - pendiente)
 
 ### ⏸ Pendiente
 
@@ -752,7 +760,110 @@ personas_registradas (1) → (N) resultados_consulta
 
 ---
 
+---
+
+## 18. Vistas Implementadas
+
+### Dashboard (resources/js/pages/Dashboard.vue)
+**Características**:
+- Tarjetas con estadísticas de solicitudes (Total, Pendientes, En Proceso, Respondidas)
+- Tarjetas con estadísticas de respuestas (Total, Borradores, Firmadas, Enviadas)
+- Tarjetas con información general (Personas Registradas, Instituciones Activas)
+- Iconos de Lucide para representación visual
+- Layout responsivo con grid de Tailwind CSS
+- Dark mode compatible
+
+### Instituciones
+
+#### Index (resources/js/pages/Instituciones/Index.vue)
+**Características**:
+- Tabla con columnas: Nombre, Nombre Completo, Unidades, Solicitudes, Estado, Acciones
+- Búsqueda en tiempo real con debounce
+- Paginación
+- Badges para contadores y estados
+- Botones de acción (Ver, Editar, Eliminar)
+- Confirmación antes de eliminar
+
+#### Create (resources/js/pages/Instituciones/Create.vue)
+**Características**:
+- Formulario con validación usando useForm de Inertia
+- Campos: Nombre (Siglas), Nombre Completo, Activo (checkbox)
+- Mensajes de error en línea con InputError
+- Botones Cancelar y Guardar
+- Indicador de procesamiento
+
+#### Edit (resources/js/pages/Instituciones/Edit.vue)
+**Características**:
+- Formulario precargado con datos de la institución
+- Mismos campos que Create
+- Botón PUT para actualización
+- Breadcrumbs con nombre de la institución
+
+#### Show (resources/js/pages/Instituciones/Show.vue)
+**Características**:
+- Información general de la institución
+- Estadísticas (Unidades, Solicitudes)
+- Tabla de unidades adscritas con estado
+- Tabla de solicitudes recientes (últimas 10)
+- Botones Volver y Editar
+
+### Solicitudes
+
+#### Index (resources/js/pages/Solicitudes/Index.vue)
+**Características**:
+- Tabla con: Número Oficio, Fecha, Institución, Delito, Personas, Estado, Acciones
+- Búsqueda por número de oficio
+- Filtro por estado (Pendiente, En Proceso, Respondida)
+- Botón especial "Responder" para solicitudes pendientes
+- Badges con colores según estado
+- Paginación
+- Formateo de fechas en español
+
+### Respuestas
+
+#### Index (resources/js/pages/Respuestas/Index.vue)
+**Características**:
+- Tabla con: Número Respuesta, Fecha, Solicitud Origen, Institución, Analista, Estado, Acciones
+- Búsqueda por número de oficio
+- Filtro por estado (Borrador, Firmada, Enviada)
+- Botón para descargar PDF
+- Editar/Eliminar solo disponible para borradores
+- Badges con colores según estado
+
+### Personas Registradas
+
+#### Index (resources/js/pages/PersonasRegistradas/Index.vue)
+**Características**:
+- Tabla con: DNI, Nombres, Apellidos, Grupo Delictivo, Estructura Criminal, Estado, Acciones
+- Búsqueda multi-campo (nombre, apellido, DNI)
+- Botón para crear nueva persona
+- Paginación
+- Acciones (Ver, Editar, Eliminar)
+
+### Componentes UI Utilizados
+Todas las vistas hacen uso de componentes de shadcn/ui adaptados para Vue 3:
+- **Card, CardHeader, CardTitle, CardContent**: Para contenedores de información
+- **Button**: Botones con variantes (default, ghost, outline)
+- **Input**: Campos de entrada con estilos consistentes
+- **Label**: Etiquetas para formularios
+- **Badge**: Indicadores de estado y contadores
+- **Table, TableHeader, TableBody, TableRow, TableHead, TableCell**: Tablas responsivas
+- **Checkbox**: Casillas de verificación
+- **Select, SelectTrigger, SelectValue, SelectContent, SelectItem**: Desplegables
+- Iconos de **Lucide Vue Next**: Plus, Search, Eye, Pencil, Trash2, FileText, etc.
+
+### Características Comunes
+- **Breadcrumbs**: Navegación contextual en todas las vistas
+- **Loading states**: Indicadores de procesamiento en formularios
+- **Error handling**: Mensajes de error integrados con Inertia
+- **Responsive design**: Adaptación a diferentes tamaños de pantalla
+- **Dark mode**: Soporte completo de tema oscuro
+- **TypeScript**: Tipado fuerte en todos los componentes
+- **Debounce**: En búsquedas para optimizar rendimiento
+
+---
+
 **Fecha de creación**: 4 de noviembre de 2025
 **Última actualización**: 4 de noviembre de 2025
-**Versión**: 1.1
-**Estado**: En Desarrollo - Base de Datos y Backend Completados
+**Versión**: 1.2
+**Estado**: En Desarrollo - Base de Datos, Backend y Vistas Principales Implementados (40%)
