@@ -23,17 +23,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Catálogos
-    Route::resource('instituciones', InstitucionController::class);
-    Route::resource('unidades', UnidadController::class);
-    Route::resource('cargos', CargoController::class);
-    Route::resource('agentes', AgenteController::class);
-    Route::resource('delitos', DelitoController::class);
+    Route::resource('instituciones', InstitucionController::class)->parameters(['instituciones' => 'institucion']);
+    Route::resource('unidades', UnidadController::class)->parameters(['unidades' => 'unidad']);
+    Route::resource('cargos', CargoController::class)->parameters(['cargos' => 'cargo']);
+    Route::resource('agentes', AgenteController::class)->parameters(['agentes' => 'agente']);
+    Route::resource('delitos', DelitoController::class)->parameters(['delitos' => 'delito']);
 
     // Personas Registradas
     Route::resource('personas-registradas', PersonaRegistradaController::class);
 
     // Solicitudes de Oficios
-    Route::resource('solicitudes', SolicitudOficioController::class);
+    Route::resource('solicitudes', SolicitudOficioController::class)->parameters(['solicitudes' => 'solicitud']);
     Route::get('api/instituciones/{institucion}/unidades', [SolicitudOficioController::class, 'getUnidadesByInstitucion'])
         ->name('api.instituciones.unidades');
     Route::get('api/unidades/{unidad}/agentes', [SolicitudOficioController::class, 'getAgentesByUnidad'])
@@ -42,7 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('api.instituciones.agentes');
 
     // Respuestas de Oficios
-    Route::resource('respuestas', RespuestaOficioController::class);
+    Route::resource('respuestas', RespuestaOficioController::class)->parameters(['respuestas' => 'respuesta']);
     Route::get('solicitudes/{solicitud}/responder', [RespuestaOficioController::class, 'create'])
         ->name('solicitudes.responder');
     Route::get('respuestas/{respuesta}/pdf', [RespuestaOficioController::class, 'generarPdf'])

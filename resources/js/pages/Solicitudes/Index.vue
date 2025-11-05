@@ -16,7 +16,7 @@ import { debounce } from 'lodash-es';
 interface SolicitudOficio {
     id: number;
     numero_oficio_entrante: string;
-    fecha_oficio: string;
+    fecha_recepcion: string;
     estado: string;
     institucion: {
         nombre: string;
@@ -51,7 +51,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const search = ref(props.filters.search || '');
-const estado = ref(props.filters.estado || '');
+const estado = ref(props.filters.estado || 'todos');
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -64,7 +64,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const performSearch = debounce(() => {
-    router.get('/solicitudes', { search: search.value, estado: estado.value }, { preserveState: true });
+    const params: any = { search: search.value };
+    if (estado.value && estado.value !== 'todos') {
+        params.estado = estado.value;
+    }
+    router.get('/solicitudes', params, { preserveState: true });
 }, 300);
 
 watch([search, estado], () => {
@@ -131,7 +135,7 @@ function getEstadoBadge(estado: string) {
                                 <SelectValue placeholder="Todos los estados" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="">Todos</SelectItem>
+                                <SelectItem value="todos">Todos</SelectItem>
                                 <SelectItem value="pendiente">Pendiente</SelectItem>
                                 <SelectItem value="en_proceso">En Proceso</SelectItem>
                                 <SelectItem value="respondida">Respondida</SelectItem>
@@ -159,7 +163,7 @@ function getEstadoBadge(estado: string) {
                                         {{ solicitud.numero_oficio_entrante }}
                                     </TableCell>
                                     <TableCell>
-                                        {{ formatDate(solicitud.fecha_oficio) }}
+                                        {{ formatDate(solicitud.fecha_recepcion) }}
                                     </TableCell>
                                     <TableCell>
                                         {{ solicitud.institucion.nombre }}

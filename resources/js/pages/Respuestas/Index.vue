@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Search, Eye, Pencil, Trash2, FileDown } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
 import { debounce } from 'lodash-es';
@@ -176,32 +177,67 @@ function getEstadoBadge(estado: string) {
                                     </TableCell>
                                     <TableCell class="text-right">
                                         <div class="flex justify-end gap-2">
-                                            <Link :href="`/respuestas/${respuesta.id}`">
-                                                <Button variant="ghost" size="icon">
-                                                    <Eye class="h-4 w-4" />
-                                                </Button>
-                                            </Link>
-                                            <Link :href="`/respuestas/${respuesta.id}/pdf`">
-                                                <Button variant="ghost" size="icon">
-                                                    <FileDown class="h-4 w-4 text-blue-600" />
-                                                </Button>
-                                            </Link>
-                                            <Link
-                                                v-if="respuesta.estado === 'borrador'"
-                                                :href="`/respuestas/${respuesta.id}/edit`"
-                                            >
-                                                <Button variant="ghost" size="icon">
-                                                    <Pencil class="h-4 w-4" />
-                                                </Button>
-                                            </Link>
-                                            <Button
-                                                v-if="respuesta.estado === 'borrador'"
-                                                variant="ghost"
-                                                size="icon"
-                                                @click="deleteRespuesta(respuesta.id)"
-                                            >
-                                                <Trash2 class="h-4 w-4 text-destructive" />
-                                            </Button>
+                                            <TooltipProvider :delay-duration="0">
+                                                <Tooltip>
+                                                    <TooltipTrigger as-child>
+                                                        <Link :href="`/respuestas/${respuesta.id}`">
+                                                            <Button variant="ghost" size="icon">
+                                                                <Eye class="h-4 w-4" />
+                                                            </Button>
+                                                        </Link>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>Ver detalles</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+
+                                            <TooltipProvider :delay-duration="0">
+                                                <Tooltip>
+                                                    <TooltipTrigger as-child>
+                                                        <a :href="`/respuestas/${respuesta.id}/pdf`" target="_blank" rel="noopener noreferrer">
+                                                            <Button variant="ghost" size="icon">
+                                                                <FileDown class="h-4 w-4 text-blue-600" />
+                                                            </Button>
+                                                        </a>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>Descargar PDF</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+
+                                            <TooltipProvider v-if="respuesta.estado === 'borrador'" :delay-duration="0">
+                                                <Tooltip>
+                                                    <TooltipTrigger as-child>
+                                                        <Link :href="`/respuestas/${respuesta.id}/edit`">
+                                                            <Button variant="ghost" size="icon">
+                                                                <Pencil class="h-4 w-4" />
+                                                            </Button>
+                                                        </Link>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>Editar respuesta</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+
+                                            <TooltipProvider v-if="respuesta.estado === 'borrador'" :delay-duration="0">
+                                                <Tooltip>
+                                                    <TooltipTrigger as-child>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            @click="deleteRespuesta(respuesta.id)"
+                                                        >
+                                                            <Trash2 class="h-4 w-4 text-destructive" />
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>Eliminar respuesta</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
                                         </div>
                                     </TableCell>
                                 </TableRow>

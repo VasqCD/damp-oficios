@@ -62,14 +62,14 @@ interface SolicitudOficio {
     id: number;
     numero_oficio_entrante: string | null;
     fecha_recepcion: string;
-    institucion: Institucion;
+    institucion: Institucion | null;
     unidad: Unidad | null;
-    agente_solicitante: AgenteSolicitante;
+    agente_solicitante: AgenteSolicitante | null;
     delito: Delito | null;
     ofendido: string | null;
     observaciones: string | null;
     estado: string;
-    usuario_registro: UsuarioRegistro;
+    usuario_registro: UsuarioRegistro | null;
     personas_solicitadas: PersonaSolicitada[];
     respuesta_oficio: RespuestaOficio | null;
     created_at: string;
@@ -218,7 +218,7 @@ function formatDateTime(date: string) {
                         <CardTitle>Institución Solicitante</CardTitle>
                     </CardHeader>
                     <CardContent class="space-y-4">
-                        <div>
+                        <div v-if="solicitud.institucion">
                             <p class="text-sm font-medium text-muted-foreground">Institución</p>
                             <p class="text-lg">{{ solicitud.institucion.nombre }}</p>
                         </div>
@@ -228,13 +228,13 @@ function formatDateTime(date: string) {
                                 {{ solicitud.unidad.nombre }} - {{ solicitud.unidad.ciudad }}
                             </p>
                         </div>
-                        <div>
+                        <div v-if="solicitud.agente_solicitante">
                             <p class="text-sm font-medium text-muted-foreground">Agente Solicitante</p>
                             <p class="text-lg">
                                 {{ solicitud.agente_solicitante.nombres }}
                                 {{ solicitud.agente_solicitante.apellidos }}
                             </p>
-                            <p class="text-sm text-muted-foreground">
+                            <p v-if="solicitud.agente_solicitante.cargo" class="text-sm text-muted-foreground">
                                 {{ solicitud.agente_solicitante.cargo.nombre }}
                             </p>
                         </div>
@@ -332,7 +332,7 @@ function formatDateTime(date: string) {
                         <CardTitle>Información del Sistema</CardTitle>
                     </CardHeader>
                     <CardContent class="grid gap-4 md:grid-cols-3">
-                        <div>
+                        <div v-if="solicitud.usuario_registro">
                             <p class="text-sm font-medium text-muted-foreground">Registrado por</p>
                             <p class="text-lg">{{ solicitud.usuario_registro.name }}</p>
                             <p class="text-sm text-muted-foreground">

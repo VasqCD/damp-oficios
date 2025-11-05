@@ -39,9 +39,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const form = useForm({
-    nombre: props.institucion.nombre,
-    nombre_completo: props.institucion.nombre_completo,
-    activo: props.institucion.activo,
+    nombre: props.institucion.nombre || '',
+    nombre_completo: props.institucion.nombre_completo || '',
+    activo: props.institucion.activo ?? true,
 });
 
 function submit() {
