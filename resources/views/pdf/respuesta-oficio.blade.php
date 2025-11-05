@@ -143,7 +143,7 @@
         .firma-linea {
             border-top: 1px solid #000;
             width: 200px;
-            margin: 0 0 5px 0;
+            margin: 50px 0 5px 0;
         }
 
         .firma-nombre {
@@ -182,7 +182,8 @@
     <!-- Fecha (Izquierda) y Número de Oficio (Derecha) en la misma fila -->
     <div class="fecha-oficio-row">
         <div class="fecha-izquierda">
-            San Pedro Sula, Cortes {{ \Carbon\Carbon::parse($respuesta->fecha_respuesta)->locale('es')->isoFormat('DD [de] MMMM [del] YYYY') }}.
+            San Pedro Sula, Cortes<br>
+            {{ \Carbon\Carbon::parse($respuesta->fecha_respuesta)->locale('es')->isoFormat('DD [de] MMMM [del] YYYY') }}.
         </div>
         <div class="numero-derecha">
             OFICIO DIPAMPCO-{{ $respuesta->numero_oficio_respuesta }}.
@@ -298,6 +299,7 @@
         <!-- Firma del Analista (Izquierda) -->
         <div class="firma-columna izquierda">
             <div class="firma-bloque">
+                <div class="firma-cargo">Agente de Investigacion</div>
                 <div class="firma-linea"></div>
                 <div class="firma-nombre">{{ $respuesta->analista->name }}</div>
                 <div class="firma-cargo">ANALISTA</div>
