@@ -34,8 +34,15 @@ interface RespuestaOficio {
 
 interface PaginatedData {
     data: RespuestaOficio[];
-    links: any;
-    meta: any;
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    links: Array<{
+        url: string | null;
+        label: string;
+        active: boolean;
+    }>;
 }
 
 interface Props {
@@ -207,10 +214,10 @@ function getEstadoBadge(estado: string) {
                         </Table>
                     </div>
 
-                    <div v-if="respuestas.meta.last_page > 1" class="mt-4 flex justify-center">
+                    <div v-if="respuestas.last_page > 1" class="mt-4 flex justify-center">
                         <div class="flex gap-2">
                             <Link
-                                v-for="link in respuestas.meta.links"
+                                v-for="link in respuestas.links"
                                 :key="link.label"
                                 :href="link.url"
                                 :class="[

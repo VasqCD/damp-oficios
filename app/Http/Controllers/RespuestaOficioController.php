@@ -7,6 +7,7 @@ use App\Models\PersonaRegistrada;
 use App\Models\RespuestaOficio;
 use App\Models\SolicitudOficio;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -59,7 +60,7 @@ class RespuestaOficioController extends Controller
             }
         }
 
-        $jefesRegionales = User::where('activo', true)->orderBy('name')->get();
+        $jefesRegionales = User::orderBy('name')->get();
 
         return Inertia::render('Respuestas/Create', [
             'solicitud' => $solicitud,
@@ -155,7 +156,7 @@ class RespuestaOficioController extends Controller
             'resultadosConsulta.personaRegistrada',
         ]);
 
-        $jefesRegionales = User::where('activo', true)->orderBy('name')->get();
+        $jefesRegionales = User::orderBy('name')->get();
 
         return Inertia::render('Respuestas/Edit', [
             'respuesta' => $respuesta,
@@ -205,9 +206,6 @@ class RespuestaOficioController extends Controller
 
     public function generarPdf(RespuestaOficio $respuesta)
     {
-        // TODO: Implementar generación de PDF
-        // Por ahora retorna JSON con los datos
-
         $respuesta->load([
             'solicitudOficio.institucion',
             'solicitudOficio.unidad',
@@ -219,9 +217,54 @@ class RespuestaOficioController extends Controller
             'resultadosConsulta.personaRegistrada',
         ]);
 
-        return response()->json([
-            'message' => 'Generación de PDF pendiente de implementar',
+        $pdf = Pdf::loadView('pdf.respuesta-oficio', [
             'respuesta' => $respuesta,
+        ]);
+
+        $pdf->setPaper('letter', 'portrait');
+
+        $filename = str_replace(['/', '\\'], '_', $respuesta->numero_oficio_respuesta) . '.pdf';
+
+        return $pdf->stream($filename, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+        ]);
+    }
+
+    public function consultarPersonas(Request $request)
+    {
+        $validated = $request->validate([
+            'personas_solicitadas' => 'required|array',
+            'personas_solicitadas.*.id' => 'required|integer',
+            'personas_solicitadas.*.dni' => 'required|string',
+            'personas_solicitadas.*.nombres' => 'required|string',
+            'personas_solicitadas.*.apellidos' => 'required|string',
+        ]);
+
+        $resultados = [];
+
+        foreach ($validated['personas_solicitadas'] as $personaSolicitada) {
+            $personaRegistrada = PersonaRegistrada::where('dni', $personaSolicitada['dni'])->first();
+
+            $resultado = [
+                'persona_solicitada_id' => $personaSolicitada['id'],
+                'nombres' => $personaSolicitada['nombres'],
+                'apellidos' => $personaSolicitada['apellidos'],
+                'dni' => $personaSolicitada['dni'],
+                'encontrada' => $personaRegistrada !== null,
+            ];
+
+            if ($personaRegistrada) {
+                $resultado['grupo_delictivo'] = $personaRegistrada->grupo_delictivo;
+                $resultado['estructura_criminal'] = $personaRegistrada->estructura_criminal;
+                $resultado['observaciones'] = $personaRegistrada->observaciones;
+            }
+
+            $resultados[] = $resultado;
+        }
+
+        return response()->json([
+            'resultados' => $resultados,
         ]);
     }
 

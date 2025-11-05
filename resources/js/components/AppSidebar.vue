@@ -13,6 +13,10 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as institucionesIndex } from '@/routes/instituciones';
+import { index as unidadesIndex } from '@/routes/unidades';
+import { index as cargosIndex } from '@/routes/cargos';
+import { index as agentesIndex } from '@/routes/agentes';
+import { index as delitosIndex } from '@/routes/delitos';
 import { index as solicitudesIndex } from '@/routes/solicitudes';
 import { index as respuestasIndex } from '@/routes/respuestas';
 import { index as personasRegistradasIndex } from '@/routes/personas-registradas';
@@ -25,7 +29,11 @@ import {
     Building2,
     FileText,
     Send,
-    Users
+    Users,
+    UserCheck,
+    MapPin,
+    Shield,
+    AlertCircle
 } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
@@ -39,6 +47,26 @@ const mainNavItems: NavItem[] = [
         title: 'Instituciones',
         href: institucionesIndex(),
         icon: Building2,
+    },
+    {
+        title: 'Unidades',
+        href: unidadesIndex(),
+        icon: MapPin,
+    },
+    {
+        title: 'Cargos',
+        href: cargosIndex(),
+        icon: Shield,
+    },
+    {
+        title: 'Agentes',
+        href: agentesIndex(),
+        icon: UserCheck,
+    },
+    {
+        title: 'Delitos',
+        href: delitosIndex(),
+        icon: AlertCircle,
     },
     {
         title: 'Solicitudes',

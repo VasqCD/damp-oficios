@@ -192,12 +192,11 @@ const handleSubmit = () => {
                     <CardContent class="space-y-4">
                         <div class="grid gap-4 md:grid-cols-2">
                             <div class="space-y-2">
-                                <Label for="numero_oficio_entrante">Número de Oficio Entrante *</Label>
+                                <Label for="numero_oficio_entrante">Número de Oficio Entrante</Label>
                                 <Input
                                     id="numero_oficio_entrante"
                                     v-model="form.numero_oficio_entrante"
-                                    required
-                                    placeholder="Ej: OF-2024-001"
+                                    placeholder="Ej: OF-2024-001 (opcional)"
                                 />
                                 <p v-if="errors.numero_oficio_entrante" class="text-sm text-destructive">
                                     {{ errors.numero_oficio_entrante }}

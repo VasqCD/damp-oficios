@@ -10,15 +10,24 @@ use Inertia\Response;
 
 class InstitucionController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $instituciones = Institucion::query()
-            ->withCount('unidades')
-            ->orderBy('nombre')
-            ->paginate(10);
+        $query = Institucion::query()
+            ->withCount('unidades');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                  ->orWhere('nombre_completo', 'like', "%{$search}%");
+            });
+        }
+
+        $instituciones = $query->orderBy('nombre')->paginate(10);
 
         return Inertia::render('Instituciones/Index', [
             'instituciones' => $instituciones,
+            'filters' => $request->only(['search']),
         ]);
     }
 

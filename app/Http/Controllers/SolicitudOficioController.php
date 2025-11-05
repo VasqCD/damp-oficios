@@ -54,10 +54,10 @@ class SolicitudOficioController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'numero_oficio_entrante' => 'required|string|unique:solicitudes_oficios,numero_oficio_entrante',
+            'numero_oficio_entrante' => 'nullable|string|max:100',
             'fecha_recepcion' => 'required|date',
             'institucion_id' => 'required|exists:instituciones,id',
-            'unidad_id' => 'required|exists:unidades,id',
+            'unidad_id' => 'nullable|exists:unidades,id',
             'agente_solicitante_id' => 'required|exists:agentes,id',
             'delito_id' => 'nullable|exists:delitos,id',
             'ofendido' => 'nullable|string|max:255',
@@ -133,10 +133,10 @@ class SolicitudOficioController extends Controller
         }
 
         $validated = $request->validate([
-            'numero_oficio_entrante' => 'required|string|unique:solicitudes_oficios,numero_oficio_entrante,' . $solicitud->id,
+            'numero_oficio_entrante' => 'nullable|string|max:100',
             'fecha_recepcion' => 'required|date',
             'institucion_id' => 'required|exists:instituciones,id',
-            'unidad_id' => 'required|exists:unidades,id',
+            'unidad_id' => 'nullable|exists:unidades,id',
             'agente_solicitante_id' => 'required|exists:agentes,id',
             'delito_id' => 'nullable|exists:delitos,id',
             'ofendido' => 'nullable|string|max:255',
@@ -201,6 +201,15 @@ class SolicitudOficioController extends Controller
     {
         return response()->json([
             'agentes' => $unidad->agentes()->with('cargo')->where('activo', true)->orderBy('nombres')->get(),
+        ]);
+    }
+
+    public function getAgentesByInstitucion(Institucion $institucion)
+    {
+        return response()->json([
+            'agentes' => Agente::whereHas('unidad', function ($query) use ($institucion) {
+                $query->where('institucion_id', $institucion->id);
+            })->with('cargo')->where('activo', true)->orderBy('nombres')->get(),
         ]);
     }
 }

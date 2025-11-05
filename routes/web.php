@@ -38,6 +38,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('api.instituciones.unidades');
     Route::get('api/unidades/{unidad}/agentes', [SolicitudOficioController::class, 'getAgentesByUnidad'])
         ->name('api.unidades.agentes');
+    Route::get('api/instituciones/{institucion}/agentes', [SolicitudOficioController::class, 'getAgentesByInstitucion'])
+        ->name('api.instituciones.agentes');
 
     // Respuestas de Oficios
     Route::resource('respuestas', RespuestaOficioController::class);
@@ -45,6 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('solicitudes.responder');
     Route::get('respuestas/{respuesta}/pdf', [RespuestaOficioController::class, 'generarPdf'])
         ->name('respuestas.pdf');
+    Route::post('api/consultar-personas', [RespuestaOficioController::class, 'consultarPersonas'])
+        ->name('api.consultar-personas');
 });
 
 require __DIR__.'/settings.php';

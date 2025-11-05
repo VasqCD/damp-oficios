@@ -913,7 +913,7 @@ Todas las vistas hacen uso de componentes de shadcn/ui adaptados para Vue 3:
 - Protegidas con middleware `auth` y `verified`
 - Endpoints API para carga dinámica de datos
 
-### 16.2 Frontend Completado (70%)
+### 16.2 Frontend Completado (75%)
 
 #### Autenticación ✅
 - Login funcional (Laravel Fortify)
@@ -948,9 +948,15 @@ Todas las vistas hacen uso de componentes de shadcn/ui adaptados para Vue 3:
 
 2. **Solicitudes**:
    - ✅ Index: Lista con búsqueda, filtro por estado
-   - ✅ Create: Formulario con carga dinámica de unidades/agentes
-   - ✅ Edit: Formulario de edición
+   - ✅ Create: Formulario con carga dinámica de unidades/agentes y múltiples personas
+   - ✅ Edit: Formulario de edición con carga dinámica
    - ⏳ Show: Vista detallada (pendiente)
+
+5. **Agentes** (CRUD completo):
+   - ✅ Index: Lista con búsqueda y filtros por cargo y tipo
+   - ✅ Create: Formulario con carga dinámica de unidades
+   - ✅ Edit: Formulario de edición con carga dinámica
+   - ✅ Show: Vista detallada con información personal e institucional
 
 3. **Respuestas**:
    - ✅ Index: Lista con búsqueda y filtros
@@ -964,13 +970,13 @@ Todas las vistas hacen uso de componentes de shadcn/ui adaptados para Vue 3:
    - ⏳ Edit: Edición de registro (pendiente)
    - ⏳ Show: Vista detallada (pendiente)
 
-### 16.3 Pendiente de Implementación (30%)
+### 16.3 Pendiente de Implementación (25%)
 
 #### Vistas Faltantes ⏳
 - Vistas Show completas (Solicitudes, Respuestas, Personas)
 - Formularios Create/Edit de Respuestas
 - Formularios Create/Edit de Personas Registradas
-- Módulos completos: Unidades, Cargos, Agentes, Delitos
+- Módulos completos: Unidades, Cargos, Delitos
 
 #### Funcionalidades Adicionales ⏳
 - **Generación de PDFs**: Sistema para generar oficios de respuesta
@@ -1012,17 +1018,46 @@ Todas las vistas hacen uso de componentes de shadcn/ui adaptados para Vue 3:
 
 3. **Módulos funcionales**:
    - ✅ Instituciones: CRUD completo
-   - ✅ Solicitudes: Crear y listar
+   - ✅ Solicitudes: CRUD completo (falta vista Show)
+   - ✅ Agentes: CRUD completo
    - ✅ Respuestas: Listar
    - ✅ Personas: Listar
 
-### 16.6 Próximos Pasos Recomendados
+### 16.6 Resumen Visual del Progreso
 
-1. **Seeders** para poblar la base de datos con datos de prueba
-2. **Completar vistas Show** para visualización detallada
-3. **Implementar generación de PDFs** para oficios
-4. **Agregar tests** para asegurar calidad
-5. **Optimizar búsquedas** con índices adicionales
+#### ✅ Módulos Completados (CRUD 100%)
+1. **Instituciones** - Index, Create, Edit, Show ✅
+2. **Agentes** - Index, Create, Edit, Show ✅
+3. **Solicitudes** - Index, Create, Edit ✅ (falta Show)
+
+#### 🔄 Módulos Parcialmente Completados
+1. **Respuestas** - Index ✅ (faltan Create, Edit, Show, PDF)
+2. **Personas Registradas** - Index ✅ (faltan Create, Edit, Show)
+
+#### ⏳ Módulos Pendientes (Solo Backend Completo)
+1. **Unidades** - Controller ✅, Vistas ❌
+2. **Cargos** - Controller ✅, Vistas ❌
+3. **Delitos** - Controller ✅, Vistas ❌
+
+### 16.7 Próximos Pasos Recomendados (Prioridad)
+
+**Alta Prioridad**:
+1. ✅ **Completar CRUD de Agentes** (COMPLETADO)
+2. ⏳ **Vista Show de Solicitudes** - Para ver detalles completos de una solicitud
+3. ⏳ **Vistas CRUD de Personas Registradas** - Create, Edit, Show con upload de foto
+4. ⏳ **Vistas CRUD de Respuestas** - Create (generar respuesta), Edit, Show
+
+**Media Prioridad**:
+5. ⏳ **CRUD de Unidades** - Index, Create, Edit, Show
+6. ⏳ **CRUD de Cargos** - Index, Create, Edit, Show
+7. ⏳ **CRUD de Delitos** - Index, Create, Edit, Show
+8. ⏳ **Seeders** - Poblar base de datos con datos de prueba
+
+**Baja Prioridad**:
+9. ⏳ **Generación de PDFs** - Sistema para generar oficios de respuesta
+10. ⏳ **Tests** - Suite de pruebas con Pest
+11. ⏳ **Reportes** - Módulo de reportes y estadísticas
+12. ⏳ **Búsqueda avanzada** - Filtros múltiples y exportación
 
 ---
 

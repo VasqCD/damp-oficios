@@ -3,28 +3,22 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Search, Eye, Pencil, Trash2 } from 'lucide-vue-next';
-import { ref, watch } from 'vue';
-import { debounce } from 'lodash-es';
+import { Plus, Eye, Pencil, Trash2 } from 'lucide-vue-next';
 
-interface Institucion {
+interface Cargo {
     id: number;
     nombre: string;
-    nombre_completo: string;
+    nivel_jerarquico: number | null;
     activo: boolean;
-    unidades_count?: number;
-    solicitudes_oficios_count?: number;
-    created_at: string;
-    updated_at: string;
+    agentes_count: number;
 }
 
 interface PaginatedData {
-    data: Institucion[];
+    data: Cargo[];
     current_page: number;
     last_page: number;
     per_page: number;
@@ -37,15 +31,10 @@ interface PaginatedData {
 }
 
 interface Props {
-    instituciones: PaginatedData;
-    filters: {
-        search?: string;
-    };
+    cargos: PaginatedData;
 }
 
 const props = defineProps<Props>();
-
-const search = ref(props.filters.search || '');
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -53,57 +42,42 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: dashboard().url,
     },
     {
-        title: 'Instituciones',
+        title: 'Cargos',
     },
 ];
 
-const performSearch = debounce(() => {
-    router.get('/instituciones', { search: search.value }, { preserveState: true });
-}, 300);
-
-watch(search, () => {
-    performSearch();
-});
-
-function deleteInstitucion(id: number) {
-    if (confirm('¿Está seguro de eliminar esta institución?')) {
-        router.delete(`/instituciones/${id}`);
+function deleteCargo(id: number) {
+    if (confirm('¿Está seguro de eliminar este cargo?')) {
+        router.delete(`/cargos/${id}`);
     }
 }
 </script>
 
 <template>
-    <Head title="Instituciones" />
+    <Head title="Cargos" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-3xl font-bold tracking-tight">Instituciones</h2>
+                    <h2 class="text-3xl font-bold tracking-tight">Cargos Policiales</h2>
                     <p class="text-muted-foreground">
-                        Gestión de instituciones del sistema
+                        Gestión de cargos y niveles jerárquicos
                     </p>
                 </div>
-                <Link href="/instituciones/create">
+                <Link href="/cargos/create">
                     <Button>
                         <Plus class="mr-2 h-4 w-4" />
-                        Nueva Institución
+                        Nuevo Cargo
                     </Button>
                 </Link>
             </div>
 
             <Card>
                 <CardHeader>
-                    <div class="flex items-center gap-4">
-                        <div class="relative flex-1">
-                            <Search class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                            <Input
-                                v-model="search"
-                                placeholder="Buscar instituciones..."
-                                class="pl-10"
-                            />
-                        </div>
-                    </div>
+                    <p class="text-sm text-muted-foreground">
+                        Los cargos están ordenados por nivel jerárquico (descendente)
+                    </p>
                 </CardHeader>
                 <CardContent>
                     <div class="rounded-md border">
@@ -111,44 +85,40 @@ function deleteInstitucion(id: number) {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Nombre</TableHead>
-                                    <TableHead>Nombre Completo</TableHead>
-                                    <TableHead class="text-center">Unidades</TableHead>
-                                    <TableHead class="text-center">Solicitudes</TableHead>
+                                    <TableHead class="text-center">Nivel Jerárquico</TableHead>
+                                    <TableHead class="text-center">Agentes</TableHead>
                                     <TableHead class="text-center">Estado</TableHead>
                                     <TableHead class="text-right">Acciones</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                <TableRow v-for="institucion in instituciones.data" :key="institucion.id">
+                                <TableRow v-for="cargo in cargos.data" :key="cargo.id">
                                     <TableCell class="font-medium">
-                                        {{ institucion.nombre }}
-                                    </TableCell>
-                                    <TableCell>
-                                        {{ institucion.nombre_completo }}
+                                        {{ cargo.nombre }}
                                     </TableCell>
                                     <TableCell class="text-center">
-                                        <Badge variant="secondary">
-                                            {{ institucion.unidades_count || 0 }}
+                                        <Badge variant="outline">
+                                            {{ cargo.nivel_jerarquico || 'N/A' }}
                                         </Badge>
                                     </TableCell>
                                     <TableCell class="text-center">
-                                        <Badge variant="secondary">
-                                            {{ institucion.solicitudes_oficios_count || 0 }}
+                                        <Badge variant="outline">
+                                            {{ cargo.agentes_count }}
                                         </Badge>
                                     </TableCell>
                                     <TableCell class="text-center">
-                                        <Badge :variant="institucion.activo ? 'default' : 'secondary'">
-                                            {{ institucion.activo ? 'Activo' : 'Inactivo' }}
+                                        <Badge :variant="cargo.activo ? 'default' : 'secondary'">
+                                            {{ cargo.activo ? 'Activo' : 'Inactivo' }}
                                         </Badge>
                                     </TableCell>
                                     <TableCell class="text-right">
                                         <div class="flex justify-end gap-2">
-                                            <Link :href="`/instituciones/${institucion.id}`">
+                                            <Link :href="`/cargos/${cargo.id}`">
                                                 <Button variant="ghost" size="icon">
                                                     <Eye class="h-4 w-4" />
                                                 </Button>
                                             </Link>
-                                            <Link :href="`/instituciones/${institucion.id}/edit`">
+                                            <Link :href="`/cargos/${cargo.id}/edit`">
                                                 <Button variant="ghost" size="icon">
                                                     <Pencil class="h-4 w-4" />
                                                 </Button>
@@ -156,26 +126,26 @@ function deleteInstitucion(id: number) {
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                @click="deleteInstitucion(institucion.id)"
+                                                @click="deleteCargo(cargo.id)"
                                             >
                                                 <Trash2 class="h-4 w-4 text-destructive" />
                                             </Button>
                                         </div>
                                     </TableCell>
                                 </TableRow>
-                                <TableRow v-if="instituciones.data.length === 0">
-                                    <TableCell colspan="6" class="text-center text-muted-foreground">
-                                        No se encontraron instituciones
+                                <TableRow v-if="cargos.data.length === 0">
+                                    <TableCell colspan="5" class="text-center text-muted-foreground">
+                                        No se encontraron cargos
                                     </TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
                     </div>
 
-                    <div v-if="instituciones.last_page > 1" class="mt-4 flex justify-center">
+                    <div v-if="cargos.last_page > 1" class="mt-4 flex justify-center">
                         <div class="flex gap-2">
                             <Link
-                                v-for="link in instituciones.links"
+                                v-for="link in cargos.links"
                                 :key="link.label"
                                 :href="link.url"
                                 :class="[

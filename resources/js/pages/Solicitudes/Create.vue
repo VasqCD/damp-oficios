@@ -86,7 +86,7 @@ const loadingAgentes = ref(false);
 const errors = ref<Record<string, string>>({});
 const processing = ref(false);
 
-// Watch institucion_id to load unidades
+// Watch institucion_id to load unidades and agentes
 watch(
     () => form.value.institucion_id,
     async (newId) => {
@@ -97,30 +97,49 @@ watch(
 
         if (newId) {
             loadingUnidades.value = true;
+            loadingAgentes.value = true;
             try {
-                const response = await fetch(`/api/instituciones/${newId}/unidades`);
-                const data = await response.json();
-                unidades.value = data.unidades;
+                // Cargar unidades
+                const unidadesResponse = await fetch(`/api/instituciones/${newId}/unidades`);
+                const unidadesData = await unidadesResponse.json();
+                unidades.value = unidadesData.unidades;
+
+                // Cargar agentes de la institución (para cuando no hay unidad)
+                const agentesResponse = await fetch(`/api/instituciones/${newId}/agentes`);
+                const agentesData = await agentesResponse.json();
+                agentes.value = agentesData.agentes;
             } catch (error) {
-                console.error('Error loading unidades:', error);
+                console.error('Error loading data:', error);
             } finally {
                 loadingUnidades.value = false;
+                loadingAgentes.value = false;
             }
         }
     }
 );
 
-// Watch unidad_id to load agentes
+// Watch unidad_id to load agentes by unidad (opcional)
 watch(
     () => form.value.unidad_id,
     async (newId) => {
         form.value.agente_solicitante_id = '';
-        agentes.value = [];
 
         if (newId) {
             loadingAgentes.value = true;
             try {
                 const response = await fetch(`/api/unidades/${newId}/agentes`);
+                const data = await response.json();
+                agentes.value = data.agentes;
+            } catch (error) {
+                console.error('Error loading agentes:', error);
+            } finally {
+                loadingAgentes.value = false;
+            }
+        } else if (form.value.institucion_id) {
+            // Si se limpia la unidad, cargar agentes de la institución
+            loadingAgentes.value = true;
+            try {
+                const response = await fetch(`/api/instituciones/${form.value.institucion_id}/agentes`);
                 const data = await response.json();
                 agentes.value = data.agentes;
             } catch (error) {
@@ -192,12 +211,11 @@ const handleSubmit = () => {
                     <CardContent class="space-y-4">
                         <div class="grid gap-4 md:grid-cols-2">
                             <div class="space-y-2">
-                                <Label for="numero_oficio_entrante">Número de Oficio Entrante *</Label>
+                                <Label for="numero_oficio_entrante">Número de Oficio Entrante</Label>
                                 <Input
                                     id="numero_oficio_entrante"
                                     v-model="form.numero_oficio_entrante"
-                                    required
-                                    placeholder="Ej: OF-2024-001"
+                                    placeholder="Ej: OF-2024-001 (opcional)"
                                 />
                                 <p v-if="errors.numero_oficio_entrante" class="text-sm text-destructive">
                                     {{ errors.numero_oficio_entrante }}
@@ -242,16 +260,15 @@ const handleSubmit = () => {
                             </div>
 
                             <div class="space-y-2">
-                                <Label for="unidad_id">Unidad *</Label>
+                                <Label for="unidad_id">Unidad</Label>
                                 <select
                                     id="unidad_id"
                                     v-model="form.unidad_id"
                                     :disabled="!form.institucion_id || loadingUnidades"
-                                    required
                                     class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <option value="">
-                                        {{ loadingUnidades ? 'Cargando...' : 'Seleccione una unidad' }}
+                                        {{ loadingUnidades ? 'Cargando...' : 'Sin unidad específica (opcional)' }}
                                     </option>
                                     <option v-for="unidad in unidades" :key="unidad.id" :value="unidad.id">
                                         {{ unidad.nombre }} - {{ unidad.ciudad }}
@@ -267,7 +284,7 @@ const handleSubmit = () => {
                                 <select
                                     id="agente_solicitante_id"
                                     v-model="form.agente_solicitante_id"
-                                    :disabled="!form.unidad_id || loadingAgentes"
+                                    :disabled="!form.institucion_id || loadingAgentes"
                                     required
                                     class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                                 >

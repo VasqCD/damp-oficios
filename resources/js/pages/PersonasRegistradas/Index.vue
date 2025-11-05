@@ -25,8 +25,15 @@ interface PersonaRegistrada {
 
 interface PaginatedData {
     data: PersonaRegistrada[];
-    links: any;
-    meta: any;
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    links: Array<{
+        url: string | null;
+        label: string;
+        active: boolean;
+    }>;
 }
 
 interface Props {
@@ -164,10 +171,10 @@ function deletePersona(id: number) {
                         </Table>
                     </div>
 
-                    <div v-if="personas.meta.last_page > 1" class="mt-4 flex justify-center">
+                    <div v-if="personas.last_page > 1" class="mt-4 flex justify-center">
                         <div class="flex gap-2">
                             <Link
-                                v-for="link in personas.meta.links"
+                                v-for="link in personas.links"
                                 :key="link.label"
                                 :href="link.url"
                                 :class="[
