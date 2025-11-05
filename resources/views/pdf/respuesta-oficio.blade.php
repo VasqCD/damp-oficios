@@ -16,7 +16,7 @@
             line-height: 1.4;
             color: #000;
             /* Aplicar márgenes directamente al body */
-            margin: 2cm 2.5cm 2cm 2.5cm;
+            margin: 1.1cm 2.5cm 2cm 2.5cm;
             padding: 0;
         }
 
