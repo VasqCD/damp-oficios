@@ -221,7 +221,7 @@ class RespuestaOficioController extends Controller
             'respuesta' => $respuesta,
         ]);
 
-        $pdf->setPaper('letter', 'portrait');
+        $pdf->setPaper('legal', 'portrait');
 
         $filename = str_replace(['/', '\\'], '_', $respuesta->numero_oficio_respuesta) . '.pdf';
 
