@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <title>{{ $respuesta->numero_oficio_respuesta }}</title>
     <style>
-        @page {
-            margin: 2cm 3cm 2cm 3cm;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -19,6 +15,9 @@
             font-size: 11pt;
             line-height: 1.4;
             color: #000;
+            /* Aplicar márgenes directamente al body */
+            margin: 2cm 2.5cm 2cm 2.5cm;
+            padding: 0;
         }
 
         .header {
