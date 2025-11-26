@@ -1,5 +1,14 @@
 <?php
 
+use App\Http\Controllers\AgenteController;
+use App\Http\Controllers\CargoController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DelitoController;
+use App\Http\Controllers\InstitucionController;
+use App\Http\Controllers\PersonaRegistradaController;
+use App\Http\Controllers\RespuestaOficioController;
+use App\Http\Controllers\SolicitudOficioController;
+use App\Http\Controllers\UnidadController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -10,8 +19,36 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Catálogos
+    Route::resource('instituciones', InstitucionController::class)->parameters(['instituciones' => 'institucion']);
+    Route::resource('unidades', UnidadController::class)->parameters(['unidades' => 'unidad']);
+    Route::resource('cargos', CargoController::class)->parameters(['cargos' => 'cargo']);
+    Route::resource('agentes', AgenteController::class)->parameters(['agentes' => 'agente']);
+    Route::resource('delitos', DelitoController::class)->parameters(['delitos' => 'delito']);
+
+    // Personas Registradas
+    Route::resource('personas-registradas', PersonaRegistradaController::class);
+
+    // Solicitudes de Oficios
+    Route::resource('solicitudes', SolicitudOficioController::class)->parameters(['solicitudes' => 'solicitud']);
+    Route::get('api/instituciones/{institucion}/unidades', [SolicitudOficioController::class, 'getUnidadesByInstitucion'])
+        ->name('api.instituciones.unidades');
+    Route::get('api/unidades/{unidad}/agentes', [SolicitudOficioController::class, 'getAgentesByUnidad'])
+        ->name('api.unidades.agentes');
+    Route::get('api/instituciones/{institucion}/agentes', [SolicitudOficioController::class, 'getAgentesByInstitucion'])
+        ->name('api.instituciones.agentes');
+
+    // Respuestas de Oficios
+    Route::resource('respuestas', RespuestaOficioController::class)->parameters(['respuestas' => 'respuesta']);
+    Route::get('solicitudes/{solicitud}/responder', [RespuestaOficioController::class, 'create'])
+        ->name('solicitudes.responder');
+    Route::get('respuestas/{respuesta}/pdf', [RespuestaOficioController::class, 'generarPdf'])
+        ->name('respuestas.pdf');
+    Route::post('api/consultar-personas', [RespuestaOficioController::class, 'consultarPersonas'])
+        ->name('api.consultar-personas');
+});
 
 require __DIR__.'/settings.php';
